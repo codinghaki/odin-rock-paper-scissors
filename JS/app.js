@@ -1,54 +1,66 @@
-// Function to get a random computer choice
+const choiceEnum = {
+  ROCK: "rock",
+  PAPER: "paper",
+  SCISSORS: "scissors",
+};
+
+const rockButton = document.querySelector("#rockButton");
+const paperButton = document.querySelector("#paperButton");
+const scissorButton = document.querySelector("#scissorButton");
+
+rockButton.addEventListener("click", () => {
+  updateGame(choiceEnum.ROCK);
+});
+
+paperButton.addEventListener("click", () => {
+    updateGame(choiceEnum.PAPER);
+});
+
+scissorButton.addEventListener("click", () => {
+    updateGame(choiceEnum.SCISSORS);
+});
+
+let playerScore = 0;
+let computerScore = 0;
+
 function getComputerChoice() {
-    const choices = ["rock", "paper", "scissors"];
-    const randomIndex = Math.floor(Math.random() * 3);
-    return choices[randomIndex];
+  const choices = ["rock", "paper", "scissors"];
+  const randomIndex = Math.floor(Math.random() * 3);
+  return choices[randomIndex];
 }
 
-// Function to play a single round
 function playRound(playerSelection, computerSelection) {
-    playerSelection = playerSelection.toLowerCase();
-
-    if (playerSelection === computerSelection) {
-        return "It's a tie!";
-    } else if (
-        (playerSelection === "rock" && computerSelection === "scissors") ||
-        (playerSelection === "scissors" && computerSelection === "paper") ||
-        (playerSelection === "paper" && computerSelection === "rock")
-    ) {
-        return `You win! ${playerSelection} beats ${computerSelection}.`;
-    } else {
-        return `You lose! ${computerSelection} beats ${playerSelection}.`;
-    }
+  if (playerSelection === computerSelection) {
+    return "It's a tie!";
+  } else if (
+    (playerSelection === choiceEnum.ROCK && computerSelection === choiceEnum.SCISSORS) ||
+    (playerSelection === choiceEnum.PAPER && computerSelection === choiceEnum.ROCK) ||
+    (playerSelection === choiceEnum.SCISSORS && computerSelection === choiceEnum.PAPER)
+  ) {
+    playerScore++;
+    return `You win! ${playerSelection} beats ${computerSelection}`;
+  } else {
+    computerScore++;
+    return `You lose! ${computerSelection} beats ${playerSelection}`;
+  }
 }
 
-// Function to play the game
-function game() {
-    let playerScore = 0;
-    let computerScore = 0;
+function updateGame(playerSelection) {
+  const computerSelection = getComputerChoice();
+  const roundResult = playRound(playerSelection, computerSelection);
 
-    for (let i = 0; i < 5; i++) {
-        const playerSelection = prompt("Enter your choice (rock, paper, or scissors):");
-        const computerSelection = getComputerChoice();
-        const result = playRound(playerSelection, computerSelection);
+  let resultsText = document.querySelector("#resultsText");
+  let computerScoreText = document.querySelector("#computerScore");
+  computerScoreText.textContent = `Computer score: ${computerScore}`;
+  let playerScoreText = document.querySelector("#playerScore");
+  playerScoreText.textContent = `Player score: ${playerScore}`;
+  resultsText.textContent = roundResult;
 
-        console.log(result);
-
-        if (result.includes("win")) {
-            playerScore++;
-        } else if (result.includes("lose")) {
-            computerScore++;
-        }
-    }
-
-    if (playerScore > computerScore) {
-        console.log("You win the game!");
-    } else if (playerScore < computerScore) {
-        console.log("Computer wins the game!");
+  if (playerScore >= 5 || computerScore >= 5) {
+    if (playerScore >= 5) {
+      resultsText.textContent = "Player wins the whole game!";
     } else {
-        console.log("It's a tie!");
+      resultsText.textContent = "Computer wins the whole game!";
     }
+  }
 }
-
-// Start the game when the page loads
-game();
